@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres
+    container_name: db
+    ports:
+      - 5432:5432
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=postgres
+    
+  pgadmin:
+      image: dpage/pgadmin4
+      environment: 
+          - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+          - PGADMIN_DEFAULT_PASSWORD=admin
+      ports: 
+          - "5050:80"
+      depends_on:
+          - db
+  backend:
+    container_name: backend
+    build:
+      context: Backend
+    # image: khoango18/team12:backend
+    ports:
+      - 1107:1107
+    depends_on:
+      - pgadmin
+  frontend:
+    container_name: frontend
+    build:
+      context: Frontend
+    # image: khoango18/team12:frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      - backend

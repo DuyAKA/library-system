@@ -1,0 +1,997 @@
+swagger: '2.0'
+info:
+  title: Backend API
+  description: API for Library Management System
+  version: 1.0.0
+host: endlib-backend.fly.dev
+basePath: /api
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /book:
+    post:
+      description: Only admin can create Book
+      tags:
+        - Books
+      summary: Create a new book
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - name: book
+          in: body
+          description: Book object to create
+          schema:
+            type: object
+            required:
+              - title
+              - category
+              - copies_owned
+              - publication_date
+              - description
+              - image
+            properties:
+              title:
+                type: string
+              category:
+                type: string
+              copies_owned:
+                type: integer
+              publication_date:
+                type: string
+                format: date
+              description:
+                type: string
+              image:
+                type: string
+      responses:
+        '200':
+          description: Book created successfully
+        '400':
+          description: Invalid request body
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error
+    get:
+      description: Returns all Books
+      tags:
+        - Book
+      summary: Retrieve all books
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Error
+  /book/{id}:
+    get:
+      description: Returns a Book base on the given ID 
+      tags:
+        - Book
+      summary: Retrieve a book by ID
+      parameters:
+        - name: id
+          in: path
+          description: Book ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Book found
+        '401':
+          description: Unauthorized
+        '404':
+          description: Book not found
+        '500':
+          description: Error
+    put:
+      description: Only admin can update a Book 
+      tags:
+        - Book
+      summary: Update a book by ID
+      parameters:
+        - name: id
+          in: path
+          description: Book ID
+          required: true
+          type: integer
+        - name: book
+          in: body
+          description: Book object to update
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              category:
+                type: string
+              copies_owned:
+                type: integer
+              publication_date:
+                type: string
+                format: date
+              description:
+                type: string
+              image:
+                type: string
+      responses:
+        '200':
+          description: Book updated successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Book not found
+        '500':
+          description: Error
+    delete:
+      description: Only admin can delete a Book 
+      tags:
+        - Book
+      summary: Delete a book by ID
+      parameters:
+        - name: id
+          in: path
+          description: Book ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Book deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Book not found
+        '500':
+          description: Error
+  /author:
+    post:
+      tags:
+        - Author
+      summary: Create a new Author
+      description: Only admin can create Author
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Author object that needs to be added to the system
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              description:
+                type: string
+      responses:
+        200:
+          description: Author created successfully
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              first_name:
+                type: string
+              last_name:
+                type: string
+              description:
+                type: string
+        400:
+          description: Invalid input data
+    get:
+      tags:
+        - Author
+      summary: Get all authors
+      description: Returns all Authors
+      parameters: 
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successfully retrieved all authors
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                description:
+                  type: string
+        500:
+          description: Internal server error
+  /author/{id}:
+    get:
+      tags:
+        - Author
+      summary: Get an author by ID
+      description: Returns a single Author with the given id
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: path
+          name: id
+          description: ID of author to retrieve
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Author retrieved successfully
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              first_name:
+                type: string
+              last_name:
+                type: string
+              description:
+                type: string
+        404:
+          description: Author not found
+        500:
+          description: Internal server error
+    put:
+        description: Only admin can update Author
+        tags:
+          - Author
+        summary: Update an author by ID
+        parameters:
+          - in: header
+            name: Authorization
+            description: JWT token obtained from logging in
+            required: true
+            type: string
+          - in: path
+            name: id
+            description: ID of author to update
+            required: true
+            type: integer
+          - in: body
+            name: body
+            description: Updated author object
+            required: true
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                description:
+                  type: string
+        responses:
+          200:
+            description: Author updated successfully
+          404:
+            description: Author not found or request body is empty
+          500:
+            description: Internal server error
+    delete:
+      description: Only admin can delete an Author
+      tags:
+          - Author
+      summary: Delete an author by ID
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: path
+          name: id
+          description: ID of author to delete
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Author deleted successfully
+        404:
+          description: Author not found
+        500:
+          description: Internal server error
+  /book_author:
+    post:
+      tags:
+        - book_author
+      summary: Create a new BookAuthor
+      description: Only admin users can create BookAuthor
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: body
+          name: book_author
+          description: The BookAuthor to create
+          required: true
+          schema:
+            type: object
+            required:
+              - book_id
+              - author_id
+            properties:
+              book_id:
+                type: integer
+                description: The ID of the book
+              author_id:
+                type: integer
+                description: The ID of the author
+      responses:
+        '200':
+          description: BookAuthor created successfully
+        '400':
+          description: Invalid request body
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+    get:
+      tags:
+        - book_author
+      summary: Retrieve all BookAuthors
+      description: Returns a list of BookAuthors
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: BookAuthors retrieved successfully
+        '500':
+          description: Internal server error
+  /book_author/{book_id}/{author_id}:
+    get:
+      tags:
+        - book_author
+      summary: Retrieve a single BookAuthor
+      description: Returns a single BookAuthor with the given book_id and author_id
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - name: book_id
+          in: path
+          description: The ID of the book
+          required: true
+          type: integer
+        - name: author_id
+          in: path
+          description: The ID of the author
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: BookAuthor retrieved successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: BookAuthor not found
+        '500':
+          description: Internal server error
+    put:
+      tags:
+        - book_author
+      summary: Update a BookAuthor
+      description: Only admin users can update BookAuthor
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - name: book_id
+          in: path
+          description: The ID of the book
+          required: true
+          type: integer
+        - name: author_id
+          in: path
+          description: The ID of the author
+          required: true
+          type: integer
+        - in: body
+          name: book_author
+          description: The BookAuthor to create
+          required: true
+          schema:
+            type: object
+            required:
+              - book_id
+              - author_id
+            properties:
+              book_id:
+                type: integer
+                description: The ID of the book
+              author_id:
+                type: integer
+                description: The ID of the author
+      responses:
+        '200':
+          description: BookAuthor updated successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: BookAuthor not found
+        '500':
+          description: Internal server error  
+    delete:
+      tags:
+        - book_author
+      summary: Delete a BookAuthor
+      description: Only admin users can delete BookAuthor
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - name: book_id
+          in: path
+          description: The ID of the book
+          required: true
+          type: integer
+        - name: author_id
+          in: path
+          description: The ID of the author
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: BookAuthor delete successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: BookAuthor not found
+        '500':
+          description: Internal server error
+  /search/byBookTitle:
+    get:
+      summary: Get Book base on title
+      tags:
+        - Search
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: title
+          description: The title of the book
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '500':
+          description: Error
+  /search/byAuthorName:
+    get:
+      summary: Get Book base on author name
+      tags:
+        - Search
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: authorName
+          description: The name of the author
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '500':
+          description: Error
+  /member/auth:
+    post:
+      summary: Authenticate the user
+      tags:
+        - Member
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: member
+          description: The username and password of member
+          required: true
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                description: The username of the member
+              password:
+                type: string
+                description: The password of the member
+      responses:
+        '202':
+          description: Authenticated
+        '401':
+          description: Wrong password || Wrong username
+        '500':
+          description: Error
+  /member/reg:
+    post:
+      summary: Register of the user
+      tags:
+        - Member
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: member
+          description: The information of the member
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+                description: The first_name of the member
+              last_name:
+                type: string
+                description: The last_name of the member
+              username:
+                type: string
+                description: The username of the member
+              password:
+                type: string
+                description: The password of the member
+              email:
+                type: string
+                description: The email of the member
+      responses:
+        '200':
+          description: Member Created
+        '500':
+          description: Error
+  /member:
+    get:
+      summary: Retrieve all members
+      tags:
+        - Member
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Some error occurred while retrieving Members.
+  /member/loan:
+    get:
+      summary: Get current loan base on token
+      tags:
+        - Member
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Error
+
+  /member/loan_history:
+    get:
+      summary: Get all loan base on Token
+      tags:
+        - Member
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Error
+  /member/member_info:
+    get:
+      summary: Get member information base on token
+      tags:
+        - Member
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '500':
+          description: Error
+    put:
+      summary: Update member information base on token
+      tags:
+        - Member
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: body
+          name: member
+          description: The information of the member
+          required: true
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+                description: The first_name of the member
+              last_name:
+                type: string
+                description: The last_name of the member
+              username:
+                type: string
+                description: The username of the member
+              password:
+                type: string
+                description: The password of the member
+              email:
+                type: string
+                description: The email of the member
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '500':
+          description: Error
+    delete:
+      summary: Delete member information base on token
+      tags:
+        - Member
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not Found
+        '500':
+          description: Error
+  /loan:
+    get:
+      summary: Retrieve all loans
+      tags:
+        - Loan
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Some error occurred while retrieving Loans.
+  /loan/make_loan:
+    post:
+      summary: Create a new loan base on token
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: body
+          name: loan
+          description: The Loan to create
+          required: true
+          schema:
+            type: object
+            properties:
+              book_id:
+                type: integer
+                description: The ID of the book
+              member_username:
+                type: string
+                description: The username of the member
+              loan_date: 
+                type: string
+                description: the loan date
+              due_date: 
+                type: string
+                description: the due date
+      responses:
+        '200':
+          description: Created
+        '500':
+          description: Unauthorized
+
+  /loan/loaned:
+    get:
+      summary: Get all curent loan that have not return yet
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '500':
+          description: Error
+      
+
+  /loan/expand/{id}:
+    put:
+      summary: Expand a loan
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Loan ID
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: body
+          name: Duration
+          description: The extented duration (day)
+          required: true
+          schema:
+            type: integer
+            properties:
+              duration:
+                type: integer
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Missing duration
+        '404':
+          description: Cannot find that loan
+        '405':
+          description: Book already returned
+        '500':
+          description: Error
+
+  /loan/finish/{id}:
+    put:
+      summary: Finish a loan
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Loan ID
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '402':
+          description: Need to pay fee
+        '405':
+          description: Book already returned
+        '500':
+          description: Error
+
+  /loan/{id}:
+    get:
+      summary: Get a loan base on ID
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Loan ID
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error
+          
+    put:
+      summary: Update a loan base on ID
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Loan ID
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+        - in: body
+          name: loan
+          description: The loan to update
+          required: true
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: The ID of the loan
+              book_id:
+                type: integer
+                description: The ID of the book
+              member_username:
+                type: string
+                description: The username of the member
+              loan_date: 
+                type: string
+                description: the loan date
+              due_date: 
+                type: string
+                description: the due date
+              returned_date:
+                type: string
+                description: the due date
+              fee:
+                type: integer
+                description: the fee of the loan
+              extent_times:
+                type: integer
+                description: the extent time of the loan
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error
+    delete:
+      summary: Delete a loan base on ID
+      tags:
+        - Loan
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Loan ID
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: JWT token obtained from logging in
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Error
